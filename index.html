@@ -25,6 +25,36 @@ body::before {
     background: radial-gradient(circle at top, rgba(255,255,255,0.4), transparent 60%);
 }
 
+/* Overlay tap screen */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 220, 230, 0.85);
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    text-align: center;
+    animation: fadeIn 1.2s ease;
+}
+
+.overlay h1 {
+    color: #cc0066;
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.overlay p {
+    color: #555;
+    font-size: 18px;
+}
+
+.tap-heart {
+    font-size: 40px;
+    animation: beat 1s infinite;
+}
+
 /* Card */
 .card {
     position: relative;
@@ -36,6 +66,14 @@ body::before {
     max-width: 500px;
     width: 90%;
     animation: popIn 1.5s ease;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 1s ease;
+}
+
+.card.show {
+    opacity: 1;
+    transform: scale(1);
 }
 
 .heart {
@@ -79,6 +117,11 @@ p {
     to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 /* Floating hearts */
 .floating-heart {
     position: absolute;
@@ -115,13 +158,23 @@ p {
 
 <body>
 
-<!-- Background Music (hidden, laptop-safe) -->
+<!-- Background Music -->
 <audio id="bgMusic" loop>
     <source src="love.mp3" type="audio/mpeg">
 </audio>
 
-<div class="card">
-    <div class="heart">💗</div>
+<!-- Tap Overlay -->
+<div class="overlay" id="overlay">
+    <div>
+        <div class="tap-heart">💗</div>
+        <h1>Tap anywhere to begin</h1>
+        <p>A little surprise is waiting for you 🌸</p>
+    </div>
+</div>
+
+<!-- Main Card -->
+<div class="card" id="card">
+    <div class="heart">💖</div>
     <h1>Happy Valentine’s Day</h1>
     <h2>My Babycake 🌸</h2>
 
@@ -162,14 +215,18 @@ function createSparkle() {
 setInterval(createHeart, 350);
 setInterval(createSparkle, 500);
 
-// Background music: start on first click (required for laptops)
 const music = document.getElementById("bgMusic");
-let musicStarted = false;
+const overlay = document.getElementById("overlay");
+const card = document.getElementById("card");
+let started = false;
 
 document.body.addEventListener("click", () => {
-    if (!musicStarted) {
+    if (!started) {
         music.play();
-        musicStarted = true;
+        overlay.style.opacity = "0";
+        setTimeout(() => overlay.remove(), 1000);
+        card.classList.add("show");
+        started = true;
     }
 });
 </script>
